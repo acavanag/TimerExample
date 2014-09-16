@@ -11,6 +11,10 @@ import SpriteKit
 
 class ProgressTimerNode: SKSpriteNode {
    
+    var running: Bool = false
+    var startTime: NSTimeInterval!
+    var duration: NSTimeInterval!
+    
     private var foregroundNode: ProgressTimerForegroudCropNode!
     private var backgroundNode: SKSpriteNode!
     private var accessoryNode: SKSpriteNode!
@@ -39,9 +43,37 @@ class ProgressTimerNode: SKSpriteNode {
         setupForegroundSpriteNode(foregroundTexture)
         setupAccessorySpriteNode(accessoryTexture)
     }
-
+    
+    func runWithDuration(duration: NSTimeInterval) {
+        self.stopRunning()
+        self.startTime = CFAbsoluteTimeGetCurrent()
+        self.duration = duration
+        running = true
+    }
+    
+    func stopRunning() {
+        running = false
+        self.setProgress(0)
+    }
+    
+    func calculateProgress(systemTime: CFTimeInterval) {
+        if (running) {
+            let elapsedTime: NSTimeInterval = CFAbsoluteTimeGetCurrent() - startTime
+            let progress: CGFloat = CGFloat(elapsedTime / duration)
+            self.setProgress(progress)
+            
+            if (progress >= 1) {
+                self.stopRunning()
+            }
+        }
+    }
+    
+    private func setProgress(progress: CGFloat) {
+        foregroundNode.setProgress(progress)
+    }
+    
     required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
     }
     
     private func setupBackgroundSpriteNode(texture: SKTexture?) {
@@ -68,8 +100,41 @@ class ProgressTimerNode: SKSpriteNode {
         }
     }
     
-    func setProgress(progress: CGFloat) {
-        foregroundNode.setProgress(progress)
+    class ProgressTimerForegroudCropNode: SKCropNode {
+        
+        var indicatorSpriteNode: SKSpriteNode!
+        var maskShapeNode: SKShapeNode!
+        var radius: CGFloat!
+        
+        convenience init(texture: SKTexture) {
+            self.init()
+            radius = texture.size().width * 0.5
+            initIndicatorSpriteNode(texture)
+            initMaskShapeNode()
+        }
+        
+        func initIndicatorSpriteNode(texture: SKTexture) {
+            indicatorSpriteNode = SKSpriteNode(texture: texture)
+            self.addChild(indicatorSpriteNode)
+        }
+        
+        func initMaskShapeNode() {
+            maskShapeNode = SKShapeNode.node()
+            maskShapeNode.antialiased = false
+            maskShapeNode.lineWidth = indicatorSpriteNode.texture!.size().width
+            self.maskNode = maskShapeNode
+        }
+        
+        func setProgress(progress: CGFloat) {
+            var indicatorProgress: CGFloat = 1.0 - progress
+            var startAngle: CGFloat = CGFloat(M_PI * 0.5)
+            var endAngle: CGFloat = startAngle + (indicatorProgress * 2.0 * CGFloat(M_PI))
+            
+            var path = UIBezierPath(arcCenter: CGPointZero, radius: radius, startAngle: endAngle, endAngle: startAngle, clockwise: true)
+            
+            self.maskShapeNode.path = path.CGPath
+        }
+        
     }
     
 }
