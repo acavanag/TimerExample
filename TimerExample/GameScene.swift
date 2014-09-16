@@ -9,37 +9,33 @@
 import SpriteKit
 
 class GameScene: SKScene {
+    
+    var timer: ProgressTimerNode!
+    let startTime: CGFloat = CGFloat(CACurrentMediaTime())
+    let kCyclesPerSecond: CGFloat = 0.25
+    
     override func didMoveToView(view: SKView) {
-        /* Setup your scene here */
-        let myLabel = SKLabelNode(fontNamed:"Chalkduster")
-        myLabel.text = "Hello, World!";
-        myLabel.fontSize = 65;
-        myLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame));
         
-        self.addChild(myLabel)
+        self.backgroundColor = SKColor.whiteColor()
+        
+        timer = ProgressTimerNode(foregroundImageName: "progress_foreground", backgroundImageName: "progress_background", accessoryImageName: "progress_accessory")
+        
+        timer.position = CGPoint(x: CGRectGetMidX(frame), y: CGRectGetMidY(frame))
+        
+        self.addChild(timer)
+        
     }
     
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        /* Called when a touch begins */
-        
-        for touch: AnyObject in touches {
-            let location = touch.locationInNode(self)
-            
-            let sprite = SKSpriteNode(imageNamed:"Spaceship")
-            
-            sprite.xScale = 0.5
-            sprite.yScale = 0.5
-            sprite.position = location
-            
-            let action = SKAction.rotateByAngle(CGFloat(M_PI), duration:1)
-            
-            sprite.runAction(SKAction.repeatActionForever(action))
-            
-            self.addChild(sprite)
-        }
-    }
-   
     override func update(currentTime: CFTimeInterval) {
-        /* Called before each frame is rendered */
+        
+        super.update(currentTime)
+        
+        let floatTime = CGFloat(currentTime)
+        let secondsElapsed: CGFloat = floatTime - startTime
+        let cycle: CGFloat = secondsElapsed * kCyclesPerSecond
+        let progress: CGFloat = cycle - CGFloat(Int(cycle))
+        
+        timer.setProgress(progress)
+        
     }
 }
