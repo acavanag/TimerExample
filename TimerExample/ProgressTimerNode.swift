@@ -33,7 +33,7 @@ class ProgressTimerNode: SKSpriteNode {
             accessoryTexture = SKTexture(imageNamed: uAccessoryImageName)
         }
         
-        super.init(texture: foregroundTexture, color: UIColor.clearColor(), size: foregroundTexture!.size())
+        super.init(texture: nil, color: UIColor.clearColor(), size: foregroundTexture!.size())
         
         //setupBackgroundSpriteNode(backgroundTexture)
         setupForegroundSpriteNode(foregroundTexture)

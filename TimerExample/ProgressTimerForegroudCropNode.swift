@@ -28,7 +28,7 @@ class ProgressTimerForegroudCropNode: SKCropNode {
     }
     
     func initMaskShapeNode() {
-        maskShapeNode = SKShapeNode()
+        maskShapeNode = SKShapeNode.node()
         maskShapeNode.antialiased = false
         maskShapeNode.lineWidth = indicatorSpriteNode.texture!.size().width
         self.maskNode = maskShapeNode
@@ -36,17 +36,13 @@ class ProgressTimerForegroudCropNode: SKCropNode {
     
     func setProgress(progress: CGFloat) {
         
-        let indicatorProgress: CGFloat = 1.0 - progress
-        let startAngle: CGFloat = CGFloat(M_PI * 0.5)
-        let endAngle: CGFloat = startAngle + (indicatorProgress  * 2.0 * CGFloat(M_PI))
+        var indicatorProgress: CGFloat = 1.0 - progress
+        var startAngle: CGFloat = CGFloat(M_PI * 0.5)
+        var endAngle: CGFloat = startAngle + (indicatorProgress * 2.0 * CGFloat(M_PI))
         
         var path = UIBezierPath(arcCenter: CGPointZero, radius: radius, startAngle: endAngle, endAngle: startAngle, clockwise: true)
-        
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            self.maskShapeNode.path = path.CGPath
-        });
-        
-        
+
+        self.maskShapeNode.path = path.CGPath
     }
     
 }
