@@ -35,9 +35,9 @@ class ProgressTimerNode: SKSpriteNode {
         
         super.init(texture: nil, color: UIColor.clearColor(), size: foregroundTexture!.size())
         
-        //setupBackgroundSpriteNode(backgroundTexture)
+        setupBackgroundSpriteNode(backgroundTexture)
         setupForegroundSpriteNode(foregroundTexture)
-        //setupAccessorySpriteNode(accessoryTexture)
+        setupAccessorySpriteNode(accessoryTexture)
     }
 
     required init(coder aDecoder: NSCoder) {
@@ -47,6 +47,7 @@ class ProgressTimerNode: SKSpriteNode {
     private func setupBackgroundSpriteNode(texture: SKTexture?) {
         if let backgroundTexture = texture {
             backgroundNode = SKSpriteNode(texture: backgroundTexture)
+            backgroundNode.zPosition = -1
             self.addChild(backgroundNode)
         }
     }
@@ -54,6 +55,7 @@ class ProgressTimerNode: SKSpriteNode {
     private func setupForegroundSpriteNode(texture: SKTexture?) {
         if let foregroundTexture = texture {
             foregroundNode = ProgressTimerForegroudCropNode(texture: foregroundTexture)
+            foregroundNode.zPosition = 0
             self.addChild(foregroundNode)
         }
     }
@@ -61,6 +63,7 @@ class ProgressTimerNode: SKSpriteNode {
     private func setupAccessorySpriteNode(texture: SKTexture?) {
         if let accessoryTexture = texture {
             accessoryNode = SKSpriteNode(texture: accessoryTexture)
+            accessoryNode.zPosition = 1
             self.addChild(accessoryNode)
         }
     }
