@@ -18,6 +18,7 @@ class ProgressTimerNode: SKSpriteNode {
     private var foregroundNode: ProgressTimerForegroudCropNode!
     private var backgroundNode: SKSpriteNode!
     private var accessoryNode: SKSpriteNode!
+    private var timerLabel: SKLabelNode!
     
     init(foregroundImageName: String?, backgroundImageName: String?, accessoryImageName: String?) {
 
@@ -46,20 +47,27 @@ class ProgressTimerNode: SKSpriteNode {
     
     func runWithDuration(duration: NSTimeInterval) {
         self.stopRunning()
-        self.startTime = CFAbsoluteTimeGetCurrent()
         self.duration = duration
         running = true
     }
     
     func stopRunning() {
         running = false
+        startTime = nil
         self.setProgress(0)
     }
     
     func calculateProgress(systemTime: CFTimeInterval) {
         if (running) {
-            let elapsedTime: NSTimeInterval = CFAbsoluteTimeGetCurrent() - startTime
+            if (startTime == nil) {
+                startTime = systemTime
+            }
+            let elapsedTime: NSTimeInterval = systemTime - startTime
             let progress: CGFloat = CGFloat(elapsedTime / duration)
+            
+            let timerLabelInt = Int(((1 - progress) * CGFloat(duration))+1)
+            
+            self.timerLabel.text = "\(timerLabelInt)"
             self.setProgress(progress)
             
             if (progress >= 1) {
@@ -93,6 +101,13 @@ class ProgressTimerNode: SKSpriteNode {
     }
     
     private func setupAccessorySpriteNode(texture: SKTexture?) {
+        
+        timerLabel = SKLabelNode.node()
+        timerLabel.zPosition = 2
+        timerLabel.fontSize = 18
+        timerLabel.verticalAlignmentMode = .Center
+        backgroundNode.addChild(timerLabel)
+        
         if let accessoryTexture = texture {
             accessoryNode = SKSpriteNode(texture: accessoryTexture)
             accessoryNode.zPosition = 1

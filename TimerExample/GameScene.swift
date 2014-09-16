@@ -17,7 +17,7 @@ class GameScene: SKScene {
         timer = ProgressTimerNode(foregroundImageName: "progress_foreground", backgroundImageName: "progress_background", accessoryImageName: "progress_accessory")
         timer.position = CGPoint(x: CGRectGetMidX(frame), y: CGRectGetMidY(frame))
         self.addChild(timer)
-        timer.runWithDuration(5)
+        timer.runWithDuration(30)
     }
     
     override func update(currentTime: CFTimeInterval) {
